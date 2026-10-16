@@ -4,7 +4,8 @@ def conjetura_collatz(numero):
     hasta alcanzar la secuencia de finalización [4, 2, 1].
 
     Parámetros:
-        numero (int): Número entero positivo mayor a cero (> 0).
+        numero (int | str): Número entero positivo mayor a cero (> 0).
+            También admite cadenas numéricas provenientes de input().
 
     Retorna:
         tuple[int, list[int]]: Una tupla con:
@@ -15,10 +16,18 @@ def conjetura_collatz(numero):
     Lanza:
         ValueError: Si el dato ingresado no es un número entero positivo (> 0).
     """
+    valor_original = numero
+
+    # Si el dato proviene de input() (tipo str), intentamos convertirlo solo si representa un entero
+    if isinstance(numero, str):
+        texto = numero.strip()
+        if texto and (texto.isdigit() or (texto[0] in "+-" and texto[1:].isdigit())):
+            numero = int(texto)
+
     # Validación de entrada: debe ser un entero estricto (excluyendo booleanos) y mayor a 0
     if isinstance(numero, bool) or not isinstance(numero, int) or numero <= 0:
         raise ValueError(
-            f"Error de validación: '{numero}' no es válido. "
+            f"Error de validación: '{valor_original}' no es válido. "
             "Debe ingresar un número entero positivo mayor a cero."
         )
 
@@ -40,15 +49,11 @@ def conjetura_collatz(numero):
 
 
 if __name__ == "__main__":
-    # Casos de prueba representativos (incluyendo casos borde 1, 2, 4 y entradas inválidas)
-    casos_prueba = [6, 1, 2, 4, 0, -5, 3.5, "texto", True]
-
-    print("=== Pruebas de la Conjetura de Collatz ===\n")
-    for caso in casos_prueba:
-        try:
-            total_iteraciones, recorrido = conjetura_collatz(caso)
-            print(f"Entrada: {caso}")
-            print(f"  -> Iteraciones totales: {total_iteraciones}")
-            print(f"  -> Secuencia completa:  {recorrido}\n")
-        except ValueError as error:
-            print(f"Entrada: {caso!r} -> {error}\n")
+    num = input("Ingrese el número al que desea aplicar la conjetura de Collatz: ")
+    try:
+        iteraciones, secuencia = conjetura_collatz(num)
+        print(f"Número: {num}")
+        print(f"Iteraciones: {iteraciones}")
+        print(f"Secuencia: {secuencia}")
+    except ValueError as error:
+        print(error)
